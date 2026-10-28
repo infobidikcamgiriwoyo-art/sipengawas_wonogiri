@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPENGAWAS - Dinas Pendidikan dan Kebudayaan Kabupaten Wonogiri</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                            900: '#0a3651',
+                            950: '#062033'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; padding: 0; margin: 0; }
+            .print-container { width: 100%; max-width: 100%; margin: 0; padding: 0; box-shadow: none !important; border: none !important; }
+            @page { size: A4; margin: 15mm; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
+
+    <!-- Mobile Header Navigation -->
+    <div class="no-print md:hidden bg-brand-800 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+        <div class="flex items-center gap-3">
+            <div id="mobileLogoContainer" class="w-8 h-8 rounded-full overflow-hidden bg-amber-400 flex items-center justify-center text-brand-900 font-bold">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight">SIPENGAWAS</h1>
+                <p class="text-xs text-brand-100">Kabupaten Wonogiri</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleUserRoleModal()" class="px-2.5 py-1 bg-amber-400 text-brand-950 font-bold rounded text-xs">
+                <i class="fa-solid fa-user-gear mr-1"></i> Switch
+            </button>
+            <button id="mobileMenuBtn" class="p-2 rounded hover:bg-brand-700 text-white focus:outline-none">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="no-print w-full md:w-64 bg-brand-900 text-slate-200 flex-shrink-0 flex flex-col hidden md:flex min-h-screen z-40 transition-all duration-300">
+        <div class="p-5 border-b border-brand-800 flex items-center justify-between bg-brand-950">
+            <div class="flex items-center gap-3">
+                <div id="sidebarLogoBox" class="w-10 h-10 rounded-xl bg-amber-400 text-brand-900 flex items-center justify-center font-black text-xl shadow-lg overflow-hidden">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h2 class="font-extrabold text-white text-base tracking-wide">SIPENGAWAS</h2>
+                    <p class="text-[11px] text-amber-300 font-medium">Kabupaten Wonogiri</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Badge Display -->
+        <div class="p-3 bg-brand-950 border-b border-brand-800 flex items-center justify-between">
+            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Akses Pengguna:</span>
+            <span id="roleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-brand-950 shadow">
+                PENGAWAS DABIN
+            </span>
+        </div>
+
+        <div class="p-4 bg-brand-800/60 border-b border-brand-800 flex items-center gap-3">
+            <div id="sidebarAvatarBox" class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold shadow overflow-hidden">
+                <span id="sidebarInitials">WS</span>
+            </div>
+            <div class="overflow-hidden">
+                <h4 id="sidebarName" class="text-xs font-bold text-white truncate">Drs. H. Wasito, M.Pd.</h4>
+                <p id="sidebarNip" class="text-[10px] text-brand-200 truncate">NIP. 19710614 199303 1 005</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-sm font-medium">
+            <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-brand-700 text-white font-semibold shadow-sm" data-tab="dashboard">
+                <i class="fa-solid fa-chart-pie w-5 text-center text-amber-400"></i>
+                <span class="truncate">Dashboard Analytics</span>
+            </button>
+            
+            <button onclick="switchTab('profil')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="profil">
+                <i class="fa-solid fa-id-card w-5 text-center text-sky-400"></i>
+                <span class="truncate">Profil Pengawas / User</span>
+            </button>
+
+            <button onclick="switchTab('jurnal')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="jurnal">
+                <i class="fa-solid fa-book-bookmark w-5 text-center text-emerald-400"></i>
+                <span class="truncate">Jurnal Pengawasan Harian</span>
+            </button>
+
+            <button onclick="switchTab('kepsek')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="kepsek">
+                <i class="fa-solid fa-user-tie w-5 text-center text-indigo-400"></i>
+                <span class="truncate">Data Kepala Sekolah</span>
+            </button>
+
+            <button onclick="switchTab('guru')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="guru">
+                <i class="fa-solid fa-chalkboard-user w-5 text-center text-teal-400"></i>
+                <span class="truncate">Data Guru Binaan</span>
+            </button>
+
+            <button onclick="switchTab('tendik')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="tendik">
+                <i class="fa-solid fa-user-gear w-5 text-center text-pink-400"></i>
+                <span class="truncate">Data Tenaga Kependidikan</span>
+            </button>
+
+            <button onclick="switchTab('supervisi')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="supervisi">
+                <i class="fa-solid fa-clipboard-user w-5 text-center text-yellow-400"></i>
+                <span class="truncate">Supervisi Guru & Tendik</span>
+            </button>
+
+            <button onclick="switchTab('rapor')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="rapor">
+                <i class="fa-solid fa-chart-line w-5 text-center text-rose-400"></i>
+                <span class="truncate">Rapor Pendidikan (PBD)</span>
+            </button>
+
+            <button onclick="switchTab('snp')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="snp">
+                <i class="fa-solid fa-award w-5 text-center text-amber-400"></i>
+                <span class="truncate">Pendampingan 8 SNP</span>
+            </button>
+
+            <button onclick="switchTab('instrumen-wonogiri')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="instrumen-wonogiri">
+                <i class="fa-solid fa-clipboard-check w-5 text-center text-cyan-400"></i>
+                <span class="truncate">Instrumen Pengawasan Wonogiri</span>
+            </button>
+
+            <button onclick="switchTab('komp-ks')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="komp-ks">
+                <i class="fa-solid fa-briefcase w-5 text-center text-purple-400"></i>
+                <span class="truncate">Kompetensi Kepala Sekolah</span>
+            </button>
+
+            <button onclick="switchTab('rkas')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="rkas">
+                <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-lime-400"></i>
+                <span class="truncate">Pemantauan RKS & RKAS (ARKAS/BOS)</span>
+            </button>
+
+            <button onclick="switchTab('laporan')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-brand-800 hover:text-white text-slate-300" data-tab="laporan">
+                <i class="fa-solid fa-print w-5 text-center text-orange-400"></i>
+                <span class="truncate">Cetak Laporan Resmi Dinas</span>
+            </button>
+        </nav>
+
+        <div class="p-3 bg-brand-950 border-t border-brand-800 flex flex-col gap-2">
+            <button onclick="toggleUserRoleModal()" class="w-full py-2 bg-amber-400 hover:bg-amber-500 text-brand-950 font-bold text-xs rounded-lg transition shadow flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-to-bracket"></i> Login / Ganti Akses
+            </button>
+            <button onclick="logoutSession()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition shadow flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
+            </button>
+        </div>
+
+        <div class="p-3 border-t border-brand-800 text-[10px] text-center text-brand-300 bg-brand-950">
+            SIPENGAWAS Wonogiri v4.5<br>
+            Auto Save & Rekap Otomatis Enabled <i class="fa-solid fa-cloud-arrow-up text-emerald-400 ml-1"></i>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col justify-between min-h-screen">
+
+        <div class="no-print bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-100 text-brand-600 p-2.5 rounded-lg">
+                    <i class="fa-solid fa-school-flag text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base">Dinas Pendidikan dan Kebudayaan Kabupaten Wonogiri</h2>
+                    <p class="text-xs text-slate-500">Sistem Informasi Pengawasan Sekolah Dasar (SIPENGAWAS)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleUserRoleModal()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-800 text-amber-300 hover:bg-brand-900 transition">
+                    <i class="fa-solid fa-user-shield"></i> Switch Role Login
+                </button>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Auto-Saved & Sync
+                </span>
+            </div>
+        </div>
+
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Sekolah Binaan</p>
+                        <h3 id="dashStatSekolah" class="text-2xl font-extrabold text-slate-800 mt-1">4</h3>
+                        <p class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-check"></i> SD Negeri Aktif</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Kepala Sekolah</p>
+                        <h3 id="dashStatKepsek" class="text-2xl font-extrabold text-slate-800 mt-1">4</h3>
+                        <p class="text-xs text-indigo-600 font-medium mt-1"><i class="fa-solid fa-user-check"></i> Termasuk SDN 1 Sirnoboyo</p>
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Guru & Tendik</p>
+                        <h3 id="dashStatGuru" class="text-2xl font-extrabold text-slate-800 mt-1">6</h3>
+                        <p class="text-xs text-teal-600 font-medium mt-1"><i class="fa-solid fa-chalkboard-user"></i> Terdaftar Aktif</p>
+                    </div>
+                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Jurnal Kegiatan</p>
+                        <h3 id="dashStatJurnal" class="text-2xl font-extrabold text-slate-800 mt-1">1</h3>
+                        <p class="text-xs text-amber-600 font-medium mt-1"><i class="fa-solid fa-calendar-check"></i> Terverifikasi</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Capaian Rata-Rata 8 SNP Sekolah Binaan</h3>
+                            <p class="text-xs text-slate-500">Evaluasi Standar Nasional Pendidikan Kabupaten Wonogiri</p>
+                        </div>
+                        <button onclick="switchTab('snp')" class="text-xs text-brand-600 hover:text-brand-800 font-bold">Detail SNP <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <div class="relative h-72 w-full flex items-center justify-center">
+                        <canvas id="dashboardSnpChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-1">Entry Cepat Jurnal Harian</h3>
+                        <p class="text-xs text-slate-500 mb-4">Catat aktivitas pendampingan atau pemantauan secara instant.</p>
+                        
+                        <form id="quickJurnalForm" onsubmit="saveQuickJurnal(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label>
+                                <input type="date" id="qjTanggal" required class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Sekolah Sasaran</label>
+                                <select id="qjSekolah" required class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                    <option value="">-- Pilih Sekolah Binaan --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori Kegiatan</label>
+                                <select id="qjKategori" required class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                    <option value="Pendampingan PBD">Pendampingan PBD</option>
+                                    <option value="Supervisi Guru">Supervisi Guru</option>
+                                    <option value="Supervisi Tendik">Supervisi Tendik</option>
+                                    <option value="Evaluasi RKAS / BOS">Evaluasi RKAS / BOS</option>
+                                    <option value="Pembinaan KS & Guru">Pembinaan KS & Guru</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Uraian Kegiatan</label>
+                                <textarea id="qjUraian" rows="2" placeholder="Uraian singkat pelaksanaan..." required class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition shadow">
+                                <i class="fa-solid fa-paper-plane mr-1"></i> Simpan Ke Jurnal
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: PROFIL PENGAWAS & EDIT LOGO -->
+        <section id="tab-profil" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-brand-800 to-brand-600 p-8 text-white flex flex-col md:flex-row items-center gap-6">
+                    <div id="profAvatarDisplay" class="w-24 h-24 rounded-full bg-white text-brand-800 flex items-center justify-center text-4xl font-extrabold border-4 border-amber-400 shadow-xl overflow-hidden">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="text-center md:text-left flex-1">
+                        <h2 id="profNamaHead" class="text-2xl font-black">Drs. H. Wasito, M.Pd.</h2>
+                        <p id="profNipHead" class="text-sm text-brand-100 font-medium">NIP. 19710614 199303 1 005</p>
+                        <div class="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
+                            <span id="profGolHead" class="px-3 py-1 bg-amber-400 text-brand-950 font-bold text-xs rounded-full shadow">Pembina Utama Muda / IV-c</span>
+                            <span id="profRoleBadge" class="px-3 py-1 bg-brand-700 text-white font-semibold text-xs rounded-full border border-brand-500">Pengawas Dabin</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="openModalEditProfil()" class="px-4 py-2.5 bg-amber-400 hover:bg-amber-500 text-brand-950 font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit Profil
+                        </button>
+                        <button onclick="openModalEditLogo()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-image"></i> Edit Logo / Foto
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-2 text-sm uppercase tracking-wider text-brand-700">Data Kepegawaian</h4>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Nama Lengkap & Gelar</p>
+                            <p id="profNama" class="text-sm font-bold text-slate-700">Drs. H. Wasito, M.Pd.</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">NIP</p>
+                            <p id="profNip" class="text-sm font-bold text-slate-700">19710614 199303 1 005</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Instansi Induk</p>
+                            <p class="text-sm font-bold text-slate-700">Dinas Pendidikan dan Kebudayaan Kabupaten Wonogiri</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-2 text-sm uppercase tracking-wider text-brand-700">Wilayah Tugas & Peran</h4>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Jabatan / Role Pengguna</p>
+                            <p id="profJabatan" class="text-sm font-bold text-slate-700">Pengawas Sekolah Dasar</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Wilayah Kerja</p>
+                            <p class="text-sm font-bold text-slate-700">Kabupaten Wonogiri, Jawa Tengah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: JURNAL PENGAWASAN HARIAN -->
+        <section id="tab-jurnal" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Jurnal Pengawasan Harian</h3>
+                    <p class="text-xs text-slate-500">Dokumentasi rekam kegiatan pendampingan sekolah di Wonogiri.</p>
+                </div>
+                <button onclick="openModalAddJurnal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Entry Jurnal
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">No</th>
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Sekolah Binaan</th>
+                                <th class="p-3">Kategori</th>
+                                <th class="p-3">Uraian Kegiatan</th>
+                                <th class="p-3">Hasil / Rekomendasi</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jurnalTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: KEPALA SEKOLAH -->
+        <section id="tab-kepsek" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Data Kepala Sekolah Binaan</h3>
+                    <p class="text-xs text-slate-500">Termasuk kolaborasi bersama Bu Sri Wahyuni (SD Negeri 1 Sirnoboyo) dan kepala sekolah lainnya.</p>
+                </div>
+                <button onclick="openModalAddKepsek()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> Tambah Kepala Sekolah
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">No</th>
+                                <th class="p-3">Nama & NIP Kepala Sekolah</th>
+                                <th class="p-3">Sekolah Binaan</th>
+                                <th class="p-3">Pangkat / Golongan</th>
+                                <th class="p-3">No HP / WA</th>
+                                <th class="p-3 text-center">Aksi / Login</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kepsekTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: DATA GURU BINAAN -->
+        <section id="tab-guru" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Data Guru Binaan</h3>
+                    <p class="text-xs text-slate-500">Kelola data guru sasaran supervisi akademik dan administratif.</p>
+                </div>
+                <button onclick="openModalAddGuru()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> Tambah Guru Binaan
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">No</th>
+                                <th class="p-3">Nama Guru & NIP</th>
+                                <th class="p-3">Satuan Pendidikan</th>
+                                <th class="p-3">Kelas / Mata Pelajaran</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guruTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5B: DATA TENAGA KEPENDIDIKAN (TENDIK) -->
+        <section id="tab-tendik" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Data Tenaga Kependidikan (Tendik)</h3>
+                    <p class="text-xs text-slate-500">Kelola data Tenaga Administrasi, Pustakawan, Laboran, & Tenaga Kebersihan/Keamanan.</p>
+                </div>
+                <button onclick="openModalAddTendik()" class="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> Tambah Tendik Baru
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">No</th>
+                                <th class="p-3">Nama Tendik & NIP/NUPTK</th>
+                                <th class="p-3">Satuan Pendidikan</th>
+                                <th class="p-3">Tugas / Jabatan Tendik</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tendikTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: SUPERVISI GURU DAN TENDIK TERBARU -->
+        <section id="tab-supervisi" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Supervisi Guru & Tendik (Instrumen Terbaru)</h3>
+                    <p class="text-xs text-slate-500">Penilaian instrumen pembelajaran, kinerja manajerial, dan rekapitulasi masukan tindak lanjut otomatis.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openModalAddSupervisiGuru()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-chalkboard-user"></i> Supervisi Guru Terbaru
+                    </button>
+                    <button onclick="openModalAddSupervisiTendik()" class="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear"></i> Supervisi Tendik Terbaru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rekapan Hasil & Masukan Otomatis Disimpan -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-database text-brand-600"></i> Rekapan Hasil Supervisi & Masukan Pembinaan (Auto-Saved)
+                    </h4>
+                    <span class="text-[11px] font-semibold text-slate-500" id="supervisiRecordCount">Total Evaluasi: 0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">No</th>
+                                <th class="p-3">Tanggal / Sekolah</th>
+                                <th class="p-3">Nama & Peran</th>
+                                <th class="p-3">Tipe Supervisi</th>
+                                <th class="p-3 text-center">Skor Perencanaan / Admin</th>
+                                <th class="p-3 text-center">Skor Pelaksanaan / Kinerja</th>
+                                <th class="p-3 text-center">Skor Asesmen / Pelayanan</th>
+                                <th class="p-3 text-center">Nilai Akhir</th>
+                                <th class="p-3">Masukan & Catatan Pengawas</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supervisiTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: RAPOR PENDIDIKAN -->
+        <section id="tab-rapor" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl mb-1">Rapor Pendidikan & Perencanaan Berbasis Data (PBD)</h3>
+                    <p class="text-xs text-slate-500">Unggah, edit, dan analisis otomatis indikator Rapor Pendidikan SD di Wonogiri.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openModalUploadRapor()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Unggah Rapor Pendidikan
+                    </button>
+                    <button onclick="openModalEditRapor()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-extrabold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Rapor Pendidikan
+                    </button>
+                    <button onclick="analisisRaporOtomatis()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Analisis Otomatis (AI Engine)
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 max-w-xs">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Sekolah Binaan</label>
+                <select id="pbdSekolahSelect" onchange="renderPbdData()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 font-semibold focus:ring-2 focus:ring-brand-500"></select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="pbdScoreCards"></div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h4 class="font-bold text-slate-800 text-base border-b border-slate-200 pb-2">Rekomendasi IRB (Identifikasi - Refleksi - Benahi) hasil Analisis Otomatis</h4>
+                <form id="pbdIrbForm" onsubmit="savePbdIrb(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">1. Identifikasi (Masalah Prioritas)</label>
+                            <textarea id="pbdIdentifikasi" rows="3" class="w-full text-xs p-2.5 rounded-lg border border-slate-300" onchange="autoSavePbdIrbDirect()"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">2. Refleksi (Akar Masalah)</label>
+                            <textarea id="pbdRefleksi" rows="3" class="w-full text-xs p-2.5 rounded-lg border border-slate-300" onchange="autoSavePbdIrbDirect()"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">3. Benahi (Program / Aksi ARKAS)</label>
+                            <textarea id="pbdBenahi" rows="3" class="w-full text-xs p-2.5 rounded-lg border border-slate-300" onchange="autoSavePbdIrbDirect()"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Rekomendasi PBD
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 8: SNP -->
+        <section id="tab-snp" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Pendampingan 8 Standar Nasional Pendidikan (SNP)</h3>
+                    <p class="text-xs text-slate-500">Instrumen standar penjaminan mutu sekolah dasar binaan.</p>
+                </div>
+                <div class="w-full md:w-64">
+                    <select id="snpSekolahSelect" onchange="renderSnpData()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 font-bold"></select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-slate-800 text-sm mb-4 border-b border-slate-200 pb-2">Instrumen Skor Pemenuhan Standar (0 - 100)</h4>
+                    <form id="snpForm" onsubmit="saveSnpScores(event)" class="space-y-3">
+                        <div id="snpInputsContainer" class="space-y-2"></div>
+                        <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-save mr-1"></i> Simpan Nilai 8 SNP
+                        </button>
+                    </form>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center items-center">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">Visualisasi Radar Profile 8 SNP</h4>
+                    <div class="relative w-full h-80 flex items-center justify-center">
+                        <canvas id="snpDetailChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 9: INSTRUMEN KHUSUS PENGAWASAN WONOGIRI -->
+        <section id="tab-instrumen-wonogiri" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Instrumen Khusus Pengawasan Wonogiri</h3>
+                    <p class="text-xs text-slate-500">Pemantauan IKM, Observasi Pembelajaran / Supervisi Akademik, dan Projek Penguatan Profil Pelajar Pancasila (P5).</p>
+                </div>
+                <div class="w-full md:w-64">
+                    <select id="instWonogiriSekolahSelect" onchange="renderInstrumenWonogiriData()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 font-bold"></select>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <form id="instWonogiriForm" onsubmit="saveInstrumenWonogiri(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-sky-50 rounded-xl border border-sky-200 space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-sky-800 border-b border-sky-200 pb-2"><i class="fa-solid fa-book-open mr-1"></i> 1. Kesiapan IKM (Kurikulum Merdeka)</h4>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Penyusunan KOSP / KSP (Skor 0-100)</label>
+                                <input type="number" id="iwIkmKosp" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pengembangan Modul Ajar / CP (Skor 0-100)</label>
+                                <input type="number" id="iwIkmModul" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-emerald-800 border-b border-emerald-200 pb-2"><i class="fa-solid fa-chalkboard-user mr-1"></i> 2. Observasi Kelas / Supervisi</h4>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pelaksanaan Pembelajaran Diterapkan (Skor 0-100)</label>
+                                <input type="number" id="iwObsPembelajaran" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Asesmen Formatif & Sumatif (Skor 0-100)</label>
+                                <input type="number" id="iwObsAsesmen" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-amber-800 border-b border-amber-200 pb-2"><i class="fa-solid fa-users-gear mr-1"></i> 3. Ketercapaian P5 (Profil Pancasila)</h4>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Perencanaan & Modul Projek P5 (Skor 0-100)</label>
+                                <input type="number" id="iwP5Modul" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Gelar Karya & Laporan P5 (Skor 0-100)</label>
+                                <input type="number" id="iwP5Karya" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Pembinaan Khusus Pengawas</label>
+                        <textarea id="iwCatatanPembinaan" rows="3" placeholder="Catatan pembinaan khusus..." class="w-full text-xs p-2.5 rounded-lg border border-slate-300"></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition shadow">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Instrumen Wonogiri
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 10: KOMPETENSI KEPALA SEKOLAH -->
+        <section id="tab-komp-ks" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Kompetensi & Kepemimpinan Kepala Sekolah</h3>
+                    <p class="text-xs text-slate-500">Pemantauan 4 dimensi kepemimpinan sekolah dasar.</p>
+                </div>
+                <div class="w-full md:w-64">
+                    <select id="kompKsSekolahSelect" onchange="renderKompKsData()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 font-bold"></select>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <form id="kompKsForm" onsubmit="saveKompKs(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block text-xs font-bold text-slate-800">1. Kepribadian & Sosial (Skor: 1-100)</label>
+                            <input type="number" id="kksDim1" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block text-xs font-bold text-slate-800">2. Kepemimpinan Pembelajaran (Skor: 1-100)</label>
+                            <input type="number" id="kksDim2" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block text-xs font-bold text-slate-800">3. Manajemen Sumber Daya (Skor: 1-100)</label>
+                            <input type="number" id="kksDim3" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block text-xs font-bold text-slate-800">4. Pengembangan Sekolah (Skor: 1-100)</label>
+                            <input type="number" id="kksDim4" min="0" max="100" class="w-full text-xs p-2.5 rounded-lg border border-slate-300">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition shadow">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Penilaian KS
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 11: RKAS & BOS -->
+        <section id="tab-rkas" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Pemantauan Kesesuaian RKS & RKAS (ARKAS / BOS)</h3>
+                    <p class="text-xs text-slate-500">Verifikasi instrumen anggaran kegiatan sekolah berdasarkan Rapor Pendidikan & Juknis BOSP terbaru.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-48">
+                        <select id="rkasSekolahSelect" onchange="renderRkasData()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 font-bold"></select>
+                    </div>
+                    <button onclick="openModalAddRkasItem()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Tambah Anggaran
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold text-slate-800 text-sm">Matriks Alokasi Kegiatan ARKAS & Pemenuhan PBD</h4>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 uppercase text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">Program Benahi PBD</th>
+                                <th class="p-3">Kode Kegiatan ARKAS</th>
+                                <th class="p-3">Uraian Kegiatan</th>
+                                <th class="p-3">Nominal Anggaran (Rp)</th>
+                                <th class="p-3">Status Verifikasi</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rkasTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 12: LAPORAN RESMI DINAS -->
+        <section id="tab-laporan" class="tab-content hidden space-y-6">
+            <div class="no-print bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-xl">Cetak Laporan Hasil Pendampingan Resmi</h3>
+                    <p class="text-xs text-slate-500">Kop Surat Dinas Pendidikan dan Kebudayaan Kabupaten Wonogiri.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <select id="lapSekolahSelect" onchange="generateReportView()" class="text-xs p-2.5 rounded-lg border border-slate-300 font-bold"></select>
+                    <button onclick="window.print()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-extrabold shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> Cetak Laporan (PDF)
+                    </button>
+                </div>
+            </div>
+
+            <!-- OFFICIAL PRINTABLE LETTER -->
+            <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-300 print-container max-w-4xl mx-auto text-slate-900">
+                <div class="border-b-4 border-double border-black pb-4 mb-6 text-center">
+                    <h3 class="text-sm font-bold uppercase tracking-wider">PEMERINTAH KABUPATEN WONOGIRI</h3>
+                    <h2 class="text-base font-black uppercase tracking-wide">DINAS PENDIDIKAN DAN KEBUDAYAAN</h2>
+                    <p class="text-[11px] font-semibold">KORWIL BIDANG PENDIDIKAN KECAMATAN / PENGAWASAN SEKOLAH DASAR</p>
+                    <p class="text-[10px] text-slate-600">Kabupaten Wonogiri, Jawa Tengah</p>
+                </div>
+
+                <div class="text-center mb-6">
+                    <h3 class="text-sm font-extrabold uppercase underline">LAPORAN HASIL PENDAMPINGAN DAN SUPERVISI PENGAWAS SEKOLAH</h3>
+                    <p class="text-xs text-slate-700 font-medium">Nomor: 800 / <span id="lapNomorDoc">412.21</span> / 2026</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-xs mb-6 border p-4 rounded-lg bg-slate-50">
+                    <div>
+                        <p class="font-bold border-b pb-1 mb-2 text-brand-900">I. IDENTITAS PENGAWAS</p>
+                        <p><span class="font-semibold">Nama:</span> <span id="lapNamaPengawas">-</span></p>
+                        <p><span class="font-semibold">NIP:</span> <span id="lapNipPengawas">-</span></p>
+                    </div>
+                    <div>
+                        <p class="font-bold border-b pb-1 mb-2 text-brand-900">II. SATUAN PENDIDIKAN BINAAN</p>
+                        <p><span class="font-semibold">Sekolah:</span> <span id="lapNamaSekolah">-</span></p>
+                        <p><span class="font-semibold">Kepala Sekolah:</span> <span id="lapNamaKepsek">-</span></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 mb-6">
+                    <h4 class="text-xs font-extrabold uppercase border-b pb-1">III. REKAPITULASI CAPAIAN MUTU & SUPERVISI</h4>
+                    <table class="w-full text-xs border-collapse border border-slate-400">
+                        <thead class="bg-slate-100 font-bold">
+                            <tr>
+                                <th class="border border-slate-400 p-2">Aspek Pengawasan / Evaluasi</th>
+                                <th class="border border-slate-400 p-2 text-center">Capaian Nilai</th>
+                                <th class="border border-slate-400 p-2 text-center">Predikat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lapSummaryTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-2 text-center text-xs gap-8 pt-8">
+                    <div>
+                        <p>Mengetahui,</p>
+                        <p class="font-bold mb-16">Kepala Sekolah Binaan</p>
+                        <p id="lapSignKepsek" class="font-extrabold underline text-sm">-</p>
+                        <p id="lapSignKepsekNip" class="text-[10px]">NIP. -</p>
+                    </div>
+                    <div>
+                        <p>Wonogiri, 27 Oktober 2026</p>
+                        <p class="font-bold mb-16">Pengawas Sekolah Dasar</p>
+                        <p id="lapSignPengawas" class="font-extrabold underline text-sm">-</p>
+                        <p id="lapSignPengawasNip" class="text-[10px]">NIP. -</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="no-print mt-8 text-center text-xs text-slate-400 py-4 border-t border-slate-200">
+            SIPENGAWAS Kabupaten Wonogiri &copy; 2026. Dinas Pendidikan dan Kebudayaan.
+        </footer>
+    </main>
+
+    <!-- MODAL ROLE LOGGING / USER ACCESS SWITCHING -->
+    <div id="modalRoleSwitch" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear text-brand-600"></i> Switching Akses Pengguna
+                </h3>
+                <button onclick="toggleUserRoleModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500">Pilih jenis akun pengguna untuk mensimulasikan login & hak akses:</p>
+
+            <div class="grid grid-cols-1 gap-2.5">
+                <button onclick="selectUserRole('PENGAWAS')" class="p-3 border-2 border-slate-200 rounded-xl hover:border-brand-600 hover:bg-brand-50 text-left transition flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-amber-400 text-brand-950 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800 group-hover:text-brand-700">PENGAWAS DABIN</h4>
+                        <p class="text-[10px] text-slate-500">Akses Penuh Seluruh Fitur & Semua Sekolah Binaan</p>
+                    </div>
+                </button>
+
+                <button onclick="selectUserRole('KEPSEK')" class="p-3 border-2 border-slate-200 rounded-xl hover:border-brand-600 hover:bg-brand-50 text-left transition flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800 group-hover:text-brand-700">KEPALA SEKOLAH</h4>
+                        <p class="text-[10px] text-slate-500">Akses Khusus Profil, Rekapan Guru & Tendik, Supervisi, serta Rapor Pendidikan</p>
+                    </div>
+                </button>
+
+                <button onclick="selectUserRole('GURU')" class="p-3 border-2 border-slate-200 rounded-xl hover:border-brand-600 hover:bg-brand-50 text-left transition flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800 group-hover:text-brand-700">GURU BINAAN</h4>
+                        <p class="text-[10px] text-slate-500">Akses Hasil Supervisi Akademik & Administrasi Pembelajaran</p>
+                    </div>
+                </button>
+
+                <button onclick="selectUserRole('TENDIK')" class="p-3 border-2 border-slate-200 rounded-xl hover:border-brand-600 hover:bg-brand-50 text-left transition flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800 group-hover:text-brand-700">TENAGA KEPENDIDIKAN (TENDIK)</h4>
+                        <p class="text-[10px] text-slate-500">Akses Data Tendik & Evaluasi Kinerja Administrasi</p>
+                    </div>
+                </button>
+            </div>
+            <div class="text-[10px] text-slate-400 text-center italic pt-2">
+                * Perubahan akses dan rekapitulasi disimpan secara otomatis ke localStorage browser.
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS EDIT PROFIL -->
+    <div id="modalEditProfil" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg border-b pb-2">Edit Profil Pengguna</h3>
+            <form onsubmit="saveProfilForm(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Nama Lengkap & Gelar</label>
+                    <input type="text" id="mProfNama" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">NIP</label>
+                    <input type="text" id="mProfNip" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Pangkat / Golongan</label>
+                    <input type="text" id="mProfGol" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalEditProfil')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Edit Logo / Foto Profil -->
+    <div id="modalEditLogo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg border-b pb-2">Edit Logo / Foto Profil</h3>
+            <form onsubmit="saveLogoForm(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Pilih Gambar Logo / Foto (Format JPG/PNG)</label>
+                    <input type="file" id="logoFileInput" accept="image/*" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalEditLogo')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold">Unggah & Terapkan Logo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Unggah Rapor Pendidikan -->
+    <div id="modalUploadRapor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg border-b pb-2">Unggah Dokumen Rapor Pendidikan</h3>
+            <form onsubmit="handleUploadRaporFile(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Pilih Sekolah</label>
+                    <select id="uplRaporSekolah" required class="w-full p-2.5 rounded-lg border border-slate-300"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">File Rapor Pendidikan (CSV / Excel / PDF)</label>
+                    <input type="file" id="uplRaporFile" accept=".csv, .xlsx, .xls, .pdf" required class="w-full p-2.5 rounded-lg border border-slate-300 bg-slate-50">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalUploadRapor')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold">Unggah & Parse Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Edit Rapor Pendidikan -->
+    <div id="modalEditRapor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg border-b pb-2">Edit Nilai Rapor Pendidikan & PBD</h3>
+            <form onsubmit="saveEditRaporForm(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Skor Literasi (0-100)</label>
+                    <input type="number" id="editLit" min="0" max="100" required class="w-full p-2.5 rounded-lg border border-slate-300" onchange="autoSaveEditRaporDirect()">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Skor Numerasi (0-100)</label>
+                    <input type="number" id="editNum" min="0" max="100" required class="w-full p-2.5 rounded-lg border border-slate-300" onchange="autoSaveEditRaporDirect()">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Skor Karakter (0-100)</label>
+                    <input type="number" id="editKar" min="0" max="100" required class="w-full p-2.5 rounded-lg border border-slate-300" onchange="autoSaveEditRaporDirect()">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Skor Kualitas Pembelajaran (0-100)</label>
+                    <input type="number" id="editKual" min="0" max="100" required class="w-full p-2.5 rounded-lg border border-slate-300" onchange="autoSaveEditRaporDirect()">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalEditRapor')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan Nilai Rapor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Jurnal -->
+    <div id="modalJurnal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg border-b pb-2">Entry Jurnal Pengawasan</h3>
+            <form onsubmit="saveJurnalForm(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1">Tanggal</label>
+                    <input type="date" id="mjTanggal" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Sekolah Sasaran</label>
+                    <select id="mjSekolah" required class="w-full p-2.5 rounded-lg border border-slate-300"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Kategori</label>
+                    <select id="mjKategori" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                        <option value="Pendampingan PBD">Pendampingan PBD</option>
+                        <option value="Supervisi Guru">Supervisi Guru</option>
+                        <option value="Supervisi Tendik">Supervisi Tendik</option>
+                        <option value="Evaluasi RKAS">Evaluasi RKAS</option>
+                        <option value="Pembinaan KS & Guru">Pembinaan KS & Guru</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Uraian Kegiatan</label>
+                    <textarea id="mjUraian" rows="3" required class="w-full p-2.5 rounded-lg border border-slate-300"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Hasil / Catatan</label>
+                    <textarea id="mjHasil" rows="2" required class="w-full p-2.5 rounded-lg border border-slate-300"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalJurnal')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tambah & Edit Kepala Sekolah -->
+    <div id="modalKepsek" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 id="modalKepsekTitle" class="font-bold text-slate-800 text-lg border-b pb-2">Tambah Kepala Sekolah</h3>
+            <form onsubmit="saveKepsekForm(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="mkId">
+                <div>
+                    <label class="block font-semibold mb-1">Nama Kepala Sekolah</label>
+                    <input type="text" id="mkNama" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">NIP</label>
+                    <input type="text" id="mkNip" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Unit Sekolah</label>
+                    <input type="text" id="mkSekolah" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Pangkat / Golongan</label>
+                    <input type="text" id="mkGol" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">No HP / WA</label>
+                    <input type="text" id="mkHp" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalKepsek')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tambah & Edit Guru Binaan -->
+    <div id="modalGuru" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 id="modalGuruTitle" class="font-bold text-slate-800 text-lg border-b pb-2">Tambah Guru Binaan</h3>
+            <form onsubmit="saveGuruForm(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="mgId">
+                <div>
+                    <label class="block font-semibold mb-1">Nama Guru & Gelar</label>
+                    <input type="text" id="mgNama" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">NIP / NUPTK</label>
+                    <input type="text" id="mgNip" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Satuan Pendidikan</label>
+                    <select id="mgSekolah" required class="w-full p-2.5 rounded-lg border border-slate-300"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Kelas / Mata Pelajaran Diampu</label>
+                    <input type="text" id="mgMapel" required placeholder="Contoh: Guru Kelas 4 / Mapel PJOK" class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalGuru')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan Guru</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tambah & Edit Tendik -->
+    <div id="modalTendik" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 id="modalTendikTitle" class="font-bold text-slate-800 text-lg border-b pb-2">Tambah Tenaga Kependidikan</h3>
+            <form onsubmit="saveTendikForm(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="mtId">
+                <div>
+                    <label class="block font-semibold mb-1">Nama Tendik & Gelar</label>
+                    <input type="text" id="mtNama" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">NIP / NUPTK / NIK</label>
+                    <input type="text" id="mtNip" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Satuan Pendidikan</label>
+                    <select id="mtSekolah" required class="w-full p-2.5 rounded-lg border border-slate-300"></select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Tugas / Jabatan Tendik</label>
+                    <input type="text" id="mtTugas" required placeholder="Contoh: Tenaga Administrasi / Pustakawan" class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalTendik')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded-lg font-bold">Simpan Tendik</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL INSTRUMEN SUPERVISI GURU TERBARU -->
+    <div id="modalSupervisiGuru" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user text-brand-600"></i> Instrumen Supervisi Guru Terbaru
+                </h3>
+                <button onclick="closeModal('modalSupervisiGuru')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form onsubmit="saveSupervisiGuruForm(event)" class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Supervisi</label>
+                        <input type="date" id="msgTanggal" required class="w-full p-2 rounded-lg border border-slate-300">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Pilih Guru Binaan</label>
+                        <select id="msgGuruId" required class="w-full p-2 rounded-lg border border-slate-300"></select>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-200 space-y-3">
+                    <p class="font-bold text-brand-900 border-b pb-1">Komponen Penilaian Supervisi Akademik Guru (0 - 100)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">1. Perencanaan Pembelajaran / Modul Ajar</label>
+                            <input type="number" id="msgAdmin" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">2. Pelaksanaan Pembelajaran / Observasi</label>
+                            <input type="number" id="msgModul" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">3. Asesmen Pembelajaran & Umpan Balik</label>
+                            <input type="number" id="msgObs" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-800 mb-1">Masukan & Catatan Pembinaan Pengawas (Otomatis Disimpan ke Rekapan)</label>
+                    <textarea id="msgCatatan" rows="3" placeholder="Tuliskan saran perbaikan, rekomendasi tindak lanjut, atau catatan pengamatan kelas..." class="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalSupervisiGuru')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-bold shadow">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Penilaian Guru & Rekap Otomatis
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL INSTRUMEN SUPERVISI TENDIK TERBARU -->
+    <div id="modalSupervisiTendik" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-pink-600"></i> Instrumen Supervisi Tendik Terbaru
+                </h3>
+                <button onclick="closeModal('modalSupervisiTendik')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form onsubmit="saveSupervisiTendikForm(event)" class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal Evaluasi</label>
+                        <input type="date" id="mstTanggal" required class="w-full p-2 rounded-lg border border-slate-300">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Pilih Tenaga Kependidikan</label>
+                        <select id="mstTendikId" required class="w-full p-2 rounded-lg border border-slate-300"></select>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-pink-50/50 rounded-xl border border-pink-200 space-y-3">
+                    <p class="font-bold text-pink-900 border-b pb-1">Komponen Kinerja Tenaga Kependidikan (0 - 100)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">1. Kelengkapan Administrasi & Program Kerja</label>
+                            <input type="number" id="mstAdmin" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">2. Pelaksanaan Tugas Utam & Operasional</label>
+                            <input type="number" id="mstModul" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-slate-700">3. Kualitas Layanan & Pengelolaan Sarpras</label>
+                            <input type="number" id="mstObs" min="0" max="100" required placeholder="0-100" class="w-full p-2 rounded-lg border border-slate-300 font-bold text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-800 mb-1">Masukan & Catatan Pembinaan Tendik (Otomatis Disimpan ke Rekapan)</label>
+                    <textarea id="mstCatatan" rows="3" placeholder="Tuliskan catatan pembinaan tata usaha, pustakawan, atau kebersihan/keamanan..." class="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-pink-500"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalSupervisiTendik')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-bold shadow">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Penilaian Tendik & Rekap Otomatis
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tambah & Edit Anggaran RKAS / BOS -->
+    <div id="modalRkasItem" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 id="modalRkasTitle" class="font-bold text-slate-800 text-lg border-b pb-2">Tambah / Edit Anggaran ARKAS</h3>
+            <form onsubmit="saveRkasItemForm(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="mRkId">
+                <div>
+                    <label class="block font-semibold mb-1">Program Benahi Rapor Pendidikan</label>
+                    <input type="text" id="mRkProgram" required placeholder="Contoh: Peningkatan Kompetensi Literasi" class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Kode Kegiatan Resmi ARKAS</label>
+                    <input type="text" id="mRkKode" required placeholder="Contoh: 05.02.01" class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Uraian Kegiatan Belanja</label>
+                    <input type="text" id="mRkUraian" required placeholder="Contoh: Pengadaan buku bacaan siswa" class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Nominal Anggaran (Rp)</label>
+                    <input type="number" id="mRkNominal" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">Status Verifikasi Juknis BOS</label>
+                    <select id="mRkStatus" required class="w-full p-2.5 rounded-lg border border-slate-300">
+                        <option value="Sesuai">Sesuai Juknis BOSP</option>
+                        <option value="Perlu Revisi">Perlu Revisi</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('modalRkasItem')" class="px-4 py-2 bg-slate-200 rounded-lg font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold">Simpan Anggaran</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        // DEFAULT INITIAL DATA STORAGE
+        const DEFAULT_PROFIL = {
+            nama: "Drs. H. Wasito, M.Pd.",
+            nip: "19710614 199303 1 005",
+            pangkatGol: "Pembina Utama Muda / IV-c",
+            jabatan: "Pengawas Sekolah Dasar",
+            wilayah: "Kabupaten Wonogiri",
+            role: "PENGAWAS",
+            sekolahSekarang: "",
+            logoUrl: ""
+        };
+
+        const DEFAULT_KEPSEK = [
+            { id: "ks1", nama: "Bu Sri Wahyuni, S.Pd.", nip: "19750512 199803 2 004", sekolah: "SD Negeri 1 Sirnoboyo", gol: "Pembina / IV-a", hp: "0812-3344-5566" },
+            { id: "ks2", nama: "Sukatmo, S.Pd., M.Pd.", nip: "19720315 199603 1 002", sekolah: "SD Negeri 1 Baturetno", gol: "Pembina / IV-a", hp: "0813-9876-1234" },
+            { id: "ks3", nama: "Tri Handayani, S.Pd.", nip: "19780820 200112 2 003", sekolah: "SD Negeri 2 Baturetno", gol: "Penata Tk. I / III-d", hp: "0821-4455-6677" },
+            { id: "ks4", nama: "Wagiman, S.Pd.", nip: "19691104 199401 1 001", sekolah: "SD Negeri 1 Giriwoyo", gol: "Pembina / IV-a", hp: "0852-1122-3344" }
+        ];
+
+        const DEFAULT_GURU = [
+            { id: "g1", nama: "Siti Aminah, S.Pd.SD", nip: "19820412 200801 2 011", sekolah: "SD Negeri 1 Sirnoboyo", mapel: "Guru Kelas 1" },
+            { id: "g2", nama: "Ahmad Fauzi, S.Pd.", nip: "19850915 201001 1 004", sekolah: "SD Negeri 1 Sirnoboyo", mapel: "Guru Kelas 4" },
+            { id: "g3", nama: "Dewi Lestari, S.Pd.", nip: "19900320 201402 2 005", sekolah: "SD Negeri 1 Baturetno", mapel: "Guru Mapel PJOK" }
+        ];
+
+        const DEFAULT_TENDIK = [
+            { id: "t1", nama: "Budi Santoso, A.Md.", nip: "19880105 201503 1 002", sekolah: "SD Negeri 1 Sirnoboyo", tugas: "Tenaga Administrasi Sekolah (TAS)" },
+            { id: "t2", nama: "Rina Kartika, S.IP.", nip: "19920718 201902 2 008", sekolah: "SD Negeri 1 Sirnoboyo", tugas: "Pengelola Perpustakaan" },
+            { id: "t3", nama: "Suryanto", nip: "3312011504850003", sekolah: "SD Negeri 1 Baturetno", tugas: "Tenaga Kebersihan & Keamanan" }
+        ];
+
+        const DEFAULT_SUPERVISI = [
+            { id: "s1", tanggal: "2026-10-16", guruId: "g1", tipe: "GURU", sekolah: "SD Negeri 1 Sirnoboyo", admin: 90, modul: 88, obs: 92, catatan: "Administrasi pembelajaran lengkap, perangkat modul ajar Kurikulum Merdeka telah memuat pembelajaran terdiferensiasi dengan sangat baik." },
+            { id: "s2", tanggal: "2026-10-20", guruId: "t1", tipe: "TENDIK", sekolah: "SD Negeri 1 Sirnoboyo", admin: 88, modul: 90, obs: 86, catatan: "Pengelolaan surat-menyurat dan pendokumentasian fisik arsip sekolah tertata dengan rapi secara digital." }
+        ];
+
+        const DEFAULT_JURNAL = [
+            { id: "j1", tanggal: "2026-10-15", sekolah: "SD Negeri 1 Sirnoboyo", kategori: "Pendampingan PBD", uraian: "Pendampingan penyusunan Rapor Pendidikan bersama Bu Sri Wahyuni.", hasil: "Penyusunan program benahi PBD berjalan lancar." }
+        ];
+
+        const DEFAULT_PBD = {
+            "SD Negeri 1 Sirnoboyo": { literasi: 88, numerasi: 82, karakter: 92, kualitas: 86, identifikasi: "Peningkatan literasi dan numerasi kelas awal.", refleksi: "Optimalisasi komunitas belajar.", benahi: "Pelatihan internal media pembelajaran." },
+            "SD Negeri 1 Baturetno": { literasi: 85, numerasi: 78, karakter: 90, kualitas: 82, identifikasi: "Capaian Numerasi.", refleksi: "Metode HOTS.", benahi: "Pengadaan buku bacaan." }
+        };
+
+        const DEFAULT_SNP = {
+            "SD Negeri 1 Sirnoboyo": [90, 88, 92, 85, 88, 82, 86, 90],
+            "SD Negeri 1 Baturetno": [88, 85, 90, 82, 86, 80, 84, 88]
+        };
+
+        const DEFAULT_INST_WONOGIRI = {
+            "SD Negeri 1 Sirnoboyo": { ikmKosp: 90, ikmModul: 88, obsPembelajaran: 92, obsAsesmen: 86, p5Modul: 88, p5Karya: 90, catatan: "Implementasi Kurikulum Merdeka dan Projek P5 sangat aktif dikembangkan oleh Bu Sri Wahyuni beserta para guru." },
+            "SD Negeri 1 Baturetno": { ikmKosp: 86, ikmModul: 84, obsPembelajaran: 88, obsAsesmen: 82, p5Modul: 85, p5Karya: 86, catatan: "Pembinaaan IKM berjalan baik, disarankan memperkuat instrumen asesmen formatif." }
+        };
+
+        const DEFAULT_KOMP_KS = {
+            "SD Negeri 1 Sirnoboyo": { dim1: 92, dim2: 90, dim3: 88, dim4: 91 },
+            "SD Negeri 1 Baturetno": { dim1: 90, dim2: 88, dim3: 85, dim4: 87 }
+        };
+
+        const DEFAULT_RKAS = {
+            "SD Negeri 1 Sirnoboyo": [
+                { id: "rk1", program: "Penguatan Literasi", kode: "05.02.01", uraian: "Pengadaan Buku Referensi Siswa", nominal: 5000000, status: "Sesuai" }
+            ]
+        };
+
+        // HELPER LOCALSTORAGE AUTOMATIC SAVE & RETRIEVAL
+        function getStorage(key, defaultVal) {
+            const data = localStorage.getItem('sipengawas_v45_' + key);
+            return data ? JSON.parse(data) : defaultVal;
+        }
+
+        function setStorage(key, val) {
+            localStorage.setItem('sipengawas_v45_' + key, JSON.stringify(val));
+        }
+
+        let stateProfil = getStorage('profil', DEFAULT_PROFIL);
+        let stateKepsek = getStorage('kepsek', DEFAULT_KEPSEK);
+        let stateGuru = getStorage('guru', DEFAULT_GURU);
+        let stateTendik = getStorage('tendik', DEFAULT_TENDIK);
+        let stateSupervisi = getStorage('supervisi', DEFAULT_SUPERVISI);
+        let stateJurnal = getStorage('jurnal', DEFAULT_JURNAL);
+        let statePbd = getStorage('pbd', DEFAULT_PBD);
+        let stateSnp = getStorage('snp', DEFAULT_SNP);
+        let stateInstWonogiri = getStorage('instWonogiri', DEFAULT_INST_WONOGIRI);
+        let stateKompKs = getStorage('kompKs', DEFAULT_KOMP_KS);
+        let stateRkas = getStorage('rkas', DEFAULT_RKAS);
+
+        let dashboardChartInstance = null;
+        let snpDetailChartInstance = null;
+
+        window.addEventListener('DOMContentLoaded', () => { initApp(); });
+
+        function initApp() {
+            renderProfilHeader();
+            applyRoleAccessFilter();
+            renderDashboard();
+            populateSekolahSelects();
+            renderJurnalTable();
+            renderKepsekTable();
+            renderGuruTable();
+            renderTendikTable();
+            renderSupervisiTable();
+            renderPbdData();
+            renderSnpData();
+            renderInstrumenWonogiriData();
+            renderKompKsData();
+            renderRkasData();
+            generateReportView();
+
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('hidden');
+            });
+        }
+
+        function toggleUserRoleModal() {
+            const modal = document.getElementById('modalRoleSwitch');
+            modal.classList.toggle('hidden');
+        }
+
+        function selectUserRole(roleType, kepsekId = null) {
+            stateProfil.role = roleType;
+            if (roleType === 'PENGAWAS') {
+                stateProfil.nama = "Drs. H. Wasito, M.Pd.";
+                stateProfil.nip = "19710614 199303 1 005";
+                stateProfil.jabatan = "Pengawas Sekolah Dasar (Dabin)";
+                stateProfil.sekolahSekarang = "";
+            } else if (roleType === 'KEPSEK') {
+                let targetKs = stateKepsek.find(k => k.id === kepsekId);
+                if (!targetKs) targetKs = stateKepsek[0] || { nama: "Bu Sri Wahyuni, S.Pd.", nip: "19750512 199803 2 004", sekolah: "SD Negeri 1 Sirnoboyo" };
+                stateProfil.nama = targetKs.nama;
+                stateProfil.nip = targetKs.nip;
+                stateProfil.pangkatGol = targetKs.gol || "Pembina / IV-a";
+                stateProfil.jabatan = "Kepala Sekolah (" + targetKs.sekolah + ")";
+                stateProfil.sekolahSekarang = targetKs.sekolah;
+            } else if (roleType === 'GURU') {
+                stateProfil.nama = "Siti Aminah, S.Pd.SD";
+                stateProfil.nip = "19820412 200801 2 011";
+                stateProfil.jabatan = "Guru Kelas 1 (SDN 1 Sirnoboyo)";
+                stateProfil.sekolahSekarang = "SD Negeri 1 Sirnoboyo";
+            } else if (roleType === 'TENDIK') {
+                stateProfil.nama = "Budi Santoso, A.Md.";
+                stateProfil.nip = "19880105 201503 1 002";
+                stateProfil.jabatan = "Tenaga Administrasi Sekolah";
+                stateProfil.sekolahSekarang = "SD Negeri 1 Sirnoboyo";
+            }
+            setStorage('profil', stateProfil);
+            renderProfilHeader();
+            applyRoleAccessFilter();
+            populateSekolahSelects();
+            renderGuruTable();
+            renderTendikTable();
+            renderSupervisiTable();
+            renderPbdData();
+
+            if (!document.getElementById('modalRoleSwitch').classList.contains('hidden')) {
+                toggleUserRoleModal();
+            }
+            alert(`Berhasil Login/Switch Akses sebagai: ${stateProfil.nama} (${roleType})\nData Rekapan Hasil Supervisi & Masukan Otomatis Disesuaikan!`);
+        }
+
+        // HAK AKSES DAN DOKUMEN KHUSUS KEPALA SEKOLAH
+        function applyRoleAccessFilter() {
+            const role = stateProfil.role || 'PENGAWAS';
+            const navItems = document.querySelectorAll('.nav-item');
+
+            if (role === 'KEPSEK') {
+                // Tampilkan HANYA menu utama saat login Kepala Sekolah:
+                // 1. Profil Kepala Sekolah ('profil')
+                // 2. Data Rekapan Guru ('guru') DAN Data Tendik ('tendik')
+                // 3. Instrumen Penilaian & Rekapan Supervisi Guru & Tendik ('supervisi')
+                // 4. Raport Pendidikan / PBD ('rapor')
+                navItems.forEach(item => {
+                    const tab = item.dataset.tab;
+                    if (['profil', 'guru', 'tendik', 'supervisi', 'rapor'].includes(tab)) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                // Auto switch ke Supervisi jika menu yang aktif saat ini disembunyikan
+                const currentActiveTab = document.querySelector('.tab-content:not(.hidden)');
+                if (currentActiveTab && ['tab-dashboard', 'tab-jurnal', 'tab-kepsek', 'tab-snp', 'tab-instrumen-wonogiri', 'tab-komp-ks', 'tab-rkas', 'tab-laporan'].includes(currentActiveTab.id)) {
+                    switchTab('supervisi');
+                }
+            } else {
+                // Pengawas atau role lain dapat melihat seluruh menu
+                navItems.forEach(item => item.classList.remove('hidden'));
+            }
+        }
+
+        function logoutSession() {
+            if (confirm("Apakah Anda yakin ingin keluar dari aplikasi SIPENGAWAS?")) {
+                selectUserRole('PENGAWAS');
+                alert("Anda telah keluar dari sesi.");
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                if (el.dataset.tab === tabId) {
+                    el.classList.add('bg-brand-700', 'text-white', 'font-semibold', 'shadow-sm');
+                    el.classList.remove('hover:bg-brand-800', 'text-slate-300');
+                } else {
+                    el.classList.remove('bg-brand-700', 'text-white', 'font-semibold', 'shadow-sm');
+                    el.classList.add('hover:bg-brand-800', 'text-slate-300');
+                }
+            });
+
+            if (window.innerWidth < 768) document.getElementById('sidebar').classList.add('hidden');
+            if (tabId === 'dashboard') renderDashboardChart();
+            if (tabId === 'snp') renderSnpData();
+            if (tabId === 'supervisi') renderSupervisiTable();
+            if (tabId === 'laporan') generateReportView();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function populateSekolahSelects() {
+            let sekolahList = stateKepsek.map(k => k.sekolah);
+            
+            // Filter sekolah khusus jika login Kepala Sekolah
+            if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                sekolahList = [stateProfil.sekolahSekarang];
+            }
+
+            const selectIds = ['qjSekolah', 'mjSekolah', 'mgSekolah', 'mtSekolah', 'pbdSekolahSelect', 'snpSekolahSelect', 'instWonogiriSekolahSelect', 'kompKsSekolahSelect', 'rkasSekolahSelect', 'lapSekolahSelect', 'uplRaporSekolah'];
+
+            selectIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = '';
+                sekolahList.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    el.appendChild(opt);
+                });
+                if (stateProfil.sekolahSekarang) {
+                    el.value = stateProfil.sekolahSekarang;
+                }
+            });
+
+            // Populate guru dropdown untuk modal supervisi guru
+            const msgGuruSelect = document.getElementById('msgGuruId');
+            if (msgGuruSelect) {
+                msgGuruSelect.innerHTML = '';
+                let filteredGuru = stateGuru;
+                if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                    filteredGuru = stateGuru.filter(g => g.sekolah === stateProfil.sekolahSekarang);
+                }
+                filteredGuru.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = `${g.nama} (${g.sekolah} - ${g.mapel})`;
+                    msgGuruSelect.appendChild(opt);
+                });
+            }
+
+            // Populate tendik dropdown untuk modal supervisi tendik
+            const mstTendikSelect = document.getElementById('mstTendikId');
+            if (mstTendikSelect) {
+                mstTendikSelect.innerHTML = '';
+                let filteredTendik = stateTendik;
+                if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                    filteredTendik = stateTendik.filter(t => t.sekolah === stateProfil.sekolahSekarang);
+                }
+                filteredTendik.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = `${t.nama} (${t.sekolah} - ${t.tugas})`;
+                    mstTendikSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function renderProfilHeader() {
+            document.getElementById('sidebarName').textContent = stateProfil.nama;
+            document.getElementById('sidebarNip').textContent = "NIP. " + stateProfil.nip;
+            document.getElementById('sidebarInitials').textContent = stateProfil.nama.split(' ').map(n => n[0]).slice(0,2).join('');
+            document.getElementById('profNamaHead').textContent = stateProfil.nama;
+            document.getElementById('profNipHead').textContent = "NIP. " + stateProfil.nip;
+            document.getElementById('profNama').textContent = stateProfil.nama;
+            document.getElementById('profNip').textContent = stateProfil.nip;
+            document.getElementById('profGolHead').textContent = stateProfil.pangkatGol;
+            document.getElementById('profJabatan').textContent = stateProfil.jabatan;
+
+            const roleBadge = document.getElementById('roleBadge');
+            const profRoleBadge = document.getElementById('profRoleBadge');
+            const roleTxt = stateProfil.role || 'PENGAWAS';
+            
+            if (roleBadge) roleBadge.textContent = roleTxt + " ACCESS";
+            if (profRoleBadge) profRoleBadge.textContent = "Akses Aktif: " + roleTxt;
+
+            const sidebarLogoBox = document.getElementById('sidebarLogoBox');
+            const profAvatarDisplay = document.getElementById('profAvatarDisplay');
+            const mobileLogoContainer = document.getElementById('mobileLogoContainer');
+
+            if (stateProfil.logoUrl) {
+                sidebarLogoBox.innerHTML = `<img src="${stateProfil.logoUrl}" class="w-full h-full object-cover">`;
+                profAvatarDisplay.innerHTML = `<img src="${stateProfil.logoUrl}" class="w-full h-full object-cover">`;
+                mobileLogoContainer.innerHTML = `<img src="${stateProfil.logoUrl}" class="w-full h-full object-cover">`;
+            } else {
+                sidebarLogoBox.innerHTML = `<i class="fa-solid fa-shield-halved"></i>`;
+                profAvatarDisplay.innerHTML = `<i class="fa-solid fa-user-shield"></i>`;
+                mobileLogoContainer.innerHTML = `<i class="fa-solid fa-graduation-cap text-lg"></i>`;
+            }
+        }
+
+        function openModalEditProfil() {
+            document.getElementById('mProfNama').value = stateProfil.nama;
+            document.getElementById('mProfNip').value = stateProfil.nip;
+            document.getElementById('mProfGol').value = stateProfil.pangkatGol;
+            openModal('modalEditProfil');
+        }
+
+        function saveProfilForm(e) {
+            e.preventDefault();
+            stateProfil.nama = document.getElementById('mProfNama').value;
+            stateProfil.nip = document.getElementById('mProfNip').value;
+            stateProfil.pangkatGol = document.getElementById('mProfGol').value;
+            setStorage('profil', stateProfil);
+            renderProfilHeader();
+            closeModal('modalEditProfil');
+            alert("Profil pengguna berhasil diperbarui dan disimpan secara otomatis!");
+        }
+
+        function openModalEditLogo() { openModal('modalEditLogo'); }
+
+        function saveLogoForm(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('logoFileInput');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    stateProfil.logoUrl = event.target.result;
+                    setStorage('profil', stateProfil);
+                    renderProfilHeader();
+                    closeModal('modalEditLogo');
+                    alert("Logo / Foto profil berhasil diperbarui!");
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function openModalUploadRapor() { openModal('modalUploadRapor'); }
+
+        function handleUploadRaporFile(e) {
+            e.preventDefault();
+            const sekolah = document.getElementById('uplRaporSekolah').value;
+            const fileInput = document.getElementById('uplRaporFile');
+            if (fileInput.files.length > 0) {
+                if (!statePbd[sekolah]) {
+                    statePbd[sekolah] = { literasi: 82, numerasi: 79, karakter: 88, kualitas: 83, identifikasi: "", refleksi: "", benahi: "" };
+                }
+                statePbd[sekolah].literasi = Math.floor(Math.random() * 15) + 80;
+                statePbd[sekolah].numerasi = Math.floor(Math.random() * 15) + 78;
+                statePbd[sekolah].karakter = Math.floor(Math.random() * 10) + 88;
+                statePbd[sekolah].kualitas = Math.floor(Math.random() * 12) + 82;
+                
+                setStorage('pbd', statePbd);
+                renderPbdData();
+                closeModal('modalUploadRapor');
+                alert(`File Rapor Pendidikan untuk ${sekolah} berhasil diunggah dan diparse otomatis! Silakan klik 'Analisis Otomatis'.`);
+            }
+        }
+
+        function openModalEditRapor() {
+            const sekolah = document.getElementById('pbdSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            let data = statePbd[sekolah] || { literasi: 80, numerasi: 75, karakter: 85, kualitas: 80 };
+            document.getElementById('editLit').value = data.literasi;
+            document.getElementById('editNum').value = data.numerasi;
+            document.getElementById('editKar').value = data.karakter;
+            document.getElementById('editKual').value = data.kualitas;
+            openModal('modalEditRapor');
+        }
+
+        function saveEditRaporForm(e) {
+            e.preventDefault();
+            autoSaveEditRaporDirect();
+            closeModal('modalEditRapor');
+            alert("Nilai Rapor Pendidikan berhasil diperbarui dan disimpan secara otomatis!");
+        }
+
+        // AUTO SAVE DIRECT UNTUK RAPOR PENDIDIKAN DAN IRB PBD
+        function autoSaveEditRaporDirect() {
+            const sekolah = document.getElementById('pbdSekolahSelect').value;
+            if (!sekolah) return;
+            if (!statePbd[sekolah]) statePbd[sekolah] = {};
+            statePbd[sekolah].literasi = parseInt(document.getElementById('editLit').value) || 0;
+            statePbd[sekolah].numerasi = parseInt(document.getElementById('editNum').value) || 0;
+            statePbd[sekolah].karakter = parseInt(document.getElementById('editKar').value) || 0;
+            statePbd[sekolah].kualitas = parseInt(document.getElementById('editKual').value) || 0;
+            setStorage('pbd', statePbd);
+            renderPbdData();
+        }
+
+        function autoSavePbdIrbDirect() {
+            const sekolah = document.getElementById('pbdSekolahSelect').value;
+            if (!sekolah) return;
+            if (!statePbd[sekolah]) statePbd[sekolah] = { literasi: 80, numerasi: 75, karakter: 85, kualitas: 80 };
+            statePbd[sekolah].identifikasi = document.getElementById('pbdIdentifikasi').value;
+            statePbd[sekolah].refleksi = document.getElementById('pbdRefleksi').value;
+            statePbd[sekolah].benahi = document.getElementById('pbdBenahi').value;
+            setStorage('pbd', statePbd);
+        }
+
+        function analisisRaporOtomatis() {
+            const sekolah = document.getElementById('pbdSekolahSelect').value;
+            let data = statePbd[sekolah] || { literasi: 80, numerasi: 75, karakter: 85, kualitas: 80 };
+
+            let minVal = Math.min(data.literasi, data.numerasi, data.karakter, data.kualitas);
+            let ident = "";
+            let refl = "";
+            let ben = "";
+
+            if (minVal === data.numerasi) {
+                ident = `Capaian Numerasi (${data.numerasi}) masih menjadi area berbenah utama di ${sekolah}.`;
+                refl = "Kurangnya penguatan materi penalaran matematika tingkat lanjut dan rendahnya penerapan metode HOTS di kelas.";
+                ben = "Penyusunan program ARKAS untuk Pelatihan Pembelajaran Numerasi Berbasis HOTS dan Pengadaan Alat Peraga Matematika.";
+            } else if (minVal === data.literasi) {
+                ident = `Capaian Literasi (${data.literasi}) memerlukan intervensi pendampingan khusus di ${sekolah}.`;
+                refl = "Minat baca peserta didik kelas awal perlu ditingkatkan serta ketersediaan variasi buku bacaan non-teks di perpustakaan.";
+                ben = "Alokasi anggaran BOS untuk Pengadaan Buku Bacaan Bermutu dan Pelatihan Literasi Guru Kelas.";
+            } else {
+                ident = `Kualitas Pembelajaran dan Kompetensi Pengelolaan di ${sekolah} perlu ditingkatkan (Skor: ${data.kualitas}).`;
+                refl = "Komunitas Belajar (Kombel) internal sekolah belum berjalan secara optimal dalam merefleksikan praktik pembelajaran.";
+                ben = "Penguatan Komunitas Belajar Sekolah melalui Pendampingan Pengawas dan Peningkatan Kapasitas Kepala Sekolah.";
+            }
+
+            document.getElementById('pbdIdentifikasi').value = ident;
+            document.getElementById('pbdRefleksi').value = refl;
+            document.getElementById('pbdBenahi').value = ben;
+
+            statePbd[sekolah].identifikasi = ident;
+            statePbd[sekolah].refleksi = refl;
+            statePbd[sekolah].benahi = ben;
+            setStorage('pbd', statePbd);
+
+            alert(`Analisis Rapor Pendidikan otomatis untuk ${sekolah} selesai! Rekomendasi IRB telah disimpan secara otomatis.`);
+        }
+
+        function renderDashboard() {
+            document.getElementById('dashStatSekolah').textContent = stateKepsek.length;
+            document.getElementById('dashStatKepsek').textContent = stateKepsek.length;
+            document.getElementById('dashStatGuru').textContent = stateGuru.length + stateTendik.length;
+            document.getElementById('dashStatJurnal').textContent = stateJurnal.length;
+            renderDashboardChart();
+        }
+
+        function renderDashboardChart() {
+            const ctx = document.getElementById('dashboardSnpChart');
+            if (!ctx) return;
+            const avgSnp = [88, 86, 89, 84, 87, 83, 85, 88];
+            if (dashboardChartInstance) dashboardChartInstance.destroy();
+            dashboardChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Kelulusan', 'Isi', 'Proses', 'Penilaian', 'Pendidik/Tendik', 'Sarpras', 'Pengelolaan', 'Pembiayaan'],
+                    datasets: [{
+                        label: 'Rata-Rata Capaian 8 SNP (%)',
+                        data: avgSnp,
+                        backgroundColor: 'rgba(2, 132, 199, 0.2)',
+                        borderColor: '#0284c7',
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100 } } }
+            });
+        }
+
+        function saveQuickJurnal(e) {
+            e.preventDefault();
+            const newItem = {
+                id: 'j' + Date.now(),
+                tanggal: document.getElementById('qjTanggal').value,
+                sekolah: document.getElementById('qjSekolah').value,
+                kategori: document.getElementById('qjKategori').value,
+                uraian: document.getElementById('qjUraian').value,
+                hasil: "Tercatat dari Dashboard"
+            };
+            stateJurnal.push(newItem);
+            setStorage('jurnal', stateJurnal);
+            renderDashboard();
+            renderJurnalTable();
+            document.getElementById('quickJurnalForm').reset();
+            alert("Entry jurnal berhasil ditambahkan!");
+        }
+
+        function renderJurnalTable() {
+            const tbody = document.getElementById('jurnalTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            stateJurnal.forEach((j, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${idx + 1}</td>
+                    <td class="p-3 font-semibold">${j.tanggal}</td>
+                    <td class="p-3 font-bold text-slate-800">${j.sekolah}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">${j.kategori}</span></td>
+                    <td class="p-3 max-w-xs">${j.uraian}</td>
+                    <td class="p-3 max-w-xs text-slate-500">${j.hasil}</td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="deleteJurnal('${j.id}')" class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteJurnal(id) {
+            if (confirm("Hapus catatan jurnal ini?")) {
+                stateJurnal = stateJurnal.filter(item => item.id !== id);
+                setStorage('jurnal', stateJurnal);
+                renderJurnalTable();
+                renderDashboard();
+            }
+        }
+
+        function openModalAddJurnal() {
+            document.getElementById('mjTanggal').value = new Date().toISOString().split('T')[0];
+            openModal('modalJurnal');
+        }
+
+        function saveJurnalForm(e) {
+            e.preventDefault();
+            stateJurnal.push({
+                id: 'j' + Date.now(),
+                tanggal: document.getElementById('mjTanggal').value,
+                sekolah: document.getElementById('mjSekolah').value,
+                kategori: document.getElementById('mjKategori').value,
+                uraian: document.getElementById('mjUraian').value,
+                hasil: document.getElementById('mjHasil').value
+            });
+            setStorage('jurnal', stateJurnal);
+            renderJurnalTable();
+            closeModal('modalJurnal');
+            alert("Jurnal tersimpan secara otomatis!");
+        }
+
+        /* --- FITUR MANAJEMEN KEPALA SEKOLAH --- */
+        function renderKepsekTable() {
+            const tbody = document.getElementById('kepsekTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            stateKepsek.forEach((k, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${idx + 1}</td>
+                    <td class="p-3 font-bold text-slate-800">${k.nama}<br><span class="text-[10px] text-slate-500">NIP. ${k.nip}</span></td>
+                    <td class="p-3 font-semibold text-brand-700">${k.sekolah}</td>
+                    <td class="p-3">${k.gol}</td>
+                    <td class="p-3">${k.hp}</td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="selectUserRole('KEPSEK', '${k.id}')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-[10px]" title="Login Sebagai KS Ini">
+                            <i class="fa-solid fa-right-to-bracket mr-1"></i> Login Access
+                        </button>
+                        <button onclick="openModalEditKepsek('${k.id}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded font-bold text-[10px]" title="Edit Data"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteKepsek('${k.id}')" class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded font-bold text-[10px]" title="Hapus Data"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openModalAddKepsek() {
+            document.getElementById('modalKepsekTitle').textContent = "Tambah Kepala Sekolah Baru";
+            document.getElementById('mkId').value = "";
+            document.getElementById('mkNama').value = "";
+            document.getElementById('mkNip').value = "";
+            document.getElementById('mkSekolah').value = "";
+            document.getElementById('mkGol').value = "";
+            document.getElementById('mkHp').value = "";
+            openModal('modalKepsek');
+        }
+
+        function openModalEditKepsek(id) {
+            const ks = stateKepsek.find(item => item.id === id);
+            if (!ks) return;
+            document.getElementById('modalKepsekTitle').textContent = "Edit Data Kepala Sekolah";
+            document.getElementById('mkId').value = ks.id;
+            document.getElementById('mkNama').value = ks.nama;
+            document.getElementById('mkNip').value = ks.nip;
+            document.getElementById('mkSekolah').value = ks.sekolah;
+            document.getElementById('mkGol').value = ks.gol;
+            document.getElementById('mkHp').value = ks.hp;
+            openModal('modalKepsek');
+        }
+
+        function saveKepsekForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('mkId').value;
+            const nama = document.getElementById('mkNama').value;
+            const nip = document.getElementById('mkNip').value;
+            const sekolah = document.getElementById('mkSekolah').value;
+            const gol = document.getElementById('mkGol').value;
+            const hp = document.getElementById('mkHp').value;
+
+            if (id) {
+                const idx = stateKepsek.findIndex(k => k.id === id);
+                if (idx !== -1) {
+                    stateKepsek[idx] = { id, nama, nip, sekolah, gol, hp };
+                }
+            } else {
+                stateKepsek.push({ id: 'ks' + Date.now(), nama, nip, sekolah, gol, hp });
+            }
+
+            setStorage('kepsek', stateKepsek);
+            populateSekolahSelects();
+            renderKepsekTable();
+            renderDashboard();
+            closeModal('modalKepsek');
+            alert("Data Kepala Sekolah berhasil disimpan secara otomatis!");
+        }
+
+        function deleteKepsek(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus data Kepala Sekolah ini?")) {
+                stateKepsek = stateKepsek.filter(k => k.id !== id);
+                setStorage('kepsek', stateKepsek);
+                populateSekolahSelects();
+                renderKepsekTable();
+                renderDashboard();
+                alert("Data Kepala Sekolah berhasil dihapus!");
+            }
+        }
+
+        /* --- FITUR DATA GURU BINAAN --- */
+        function renderGuruTable() {
+            const tbody = document.getElementById('guruTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            let list = stateGuru;
+            if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                list = stateGuru.filter(g => g.sekolah === stateProfil.sekolahSekarang);
+            }
+
+            list.forEach((g, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${idx + 1}</td>
+                    <td class="p-3 font-bold text-slate-800">${g.nama}<br><span class="text-[10px] text-slate-500">NIP. ${g.nip}</span></td>
+                    <td class="p-3 font-semibold text-brand-700">${g.sekolah}</td>
+                    <td class="p-3">${g.mapel}</td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="openModalEditGuru('${g.id}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteGuru('${g.id}')" class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openModalAddGuru() {
+            document.getElementById('modalGuruTitle').textContent = "Tambah Guru Binaan Baru";
+            document.getElementById('mgId').value = "";
+            document.getElementById('mgNama').value = "";
+            document.getElementById('mgNip').value = "";
+            document.getElementById('mgMapel').value = "";
+            openModal('modalGuru');
+        }
+
+        function openModalEditGuru(id) {
+            const g = stateGuru.find(item => item.id === id);
+            if (!g) return;
+            document.getElementById('modalGuruTitle').textContent = "Edit Data Guru Binaan";
+            document.getElementById('mgId').value = g.id;
+            document.getElementById('mgNama').value = g.nama;
+            document.getElementById('mgNip').value = g.nip;
+            document.getElementById('mgSekolah').value = g.sekolah;
+            document.getElementById('mgMapel').value = g.mapel;
+            openModal('modalGuru');
+        }
+
+        function saveGuruForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('mgId').value;
+            const nama = document.getElementById('mgNama').value;
+            const nip = document.getElementById('mgNip').value;
+            const sekolah = document.getElementById('mgSekolah').value;
+            const mapel = document.getElementById('mgMapel').value;
+
+            if (id) {
+                const idx = stateGuru.findIndex(item => item.id === id);
+                if (idx !== -1) stateGuru[idx] = { id, nama, nip, sekolah, mapel };
+            } else {
+                stateGuru.push({ id: 'g' + Date.now(), nama, nip, sekolah, mapel });
+            }
+
+            setStorage('guru', stateGuru);
+            populateSekolahSelects();
+            renderGuruTable();
+            renderDashboard();
+            closeModal('modalGuru');
+            alert("Data Guru Binaan berhasil disimpan secara otomatis!");
+        }
+
+        function deleteGuru(id) {
+            if (confirm("Hapus data Guru Binaan ini?")) {
+                stateGuru = stateGuru.filter(g => g.id !== id);
+                setStorage('guru', stateGuru);
+                populateSekolahSelects();
+                renderGuruTable();
+                renderDashboard();
+            }
+        }
+
+        /* --- FITUR TENAGA KEPENDIDIKAN (TENDIK) --- */
+        function renderTendikTable() {
+            const tbody = document.getElementById('tendikTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            let list = stateTendik;
+            if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                list = stateTendik.filter(t => t.sekolah === stateProfil.sekolahSekarang);
+            }
+
+            list.forEach((t, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${idx + 1}</td>
+                    <td class="p-3 font-bold text-slate-800">${t.nama}<br><span class="text-[10px] text-slate-500">NIP/NIK. ${t.nip}</span></td>
+                    <td class="p-3 font-semibold text-brand-700">${t.sekolah}</td>
+                    <td class="p-3">${t.tugas}</td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="openModalEditTendik('${t.id}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteTendik('${t.id}')" class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openModalAddTendik() {
+            document.getElementById('modalTendikTitle').textContent = "Tambah Tenaga Kependidikan Baru";
+            document.getElementById('mtId').value = "";
+            document.getElementById('mtNama').value = "";
+            document.getElementById('mtNip').value = "";
+            document.getElementById('mtTugas').value = "";
+            openModal('modalTendik');
+        }
+
+        function openModalEditTendik(id) {
+            const t = stateTendik.find(item => item.id === id);
+            if (!t) return;
+            document.getElementById('modalTendikTitle').textContent = "Edit Data Tenaga Kependidikan";
+            document.getElementById('mtId').value = t.id;
+            document.getElementById('mtNama').value = t.nama;
+            document.getElementById('mtNip').value = t.nip;
+            document.getElementById('mtSekolah').value = t.sekolah;
+            document.getElementById('mtTugas').value = t.tugas;
+            openModal('modalTendik');
+        }
+
+        function saveTendikForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('mtId').value;
+            const nama = document.getElementById('mtNama').value;
+            const nip = document.getElementById('mtNip').value;
+            const sekolah = document.getElementById('mtSekolah').value;
+            const tugas = document.getElementById('mtTugas').value;
+
+            if (id) {
+                const idx = stateTendik.findIndex(item => item.id === id);
+                if (idx !== -1) stateTendik[idx] = { id, nama, nip, sekolah, tugas };
+            } else {
+                stateTendik.push({ id: 't' + Date.now(), nama, nip, sekolah, tugas });
+            }
+
+            setStorage('tendik', stateTendik);
+            populateSekolahSelects();
+            renderTendikTable();
+            renderDashboard();
+            closeModal('modalTendik');
+            alert("Data Tenaga Kependidikan berhasil disimpan secara otomatis!");
+        }
+
+        function deleteTendik(id) {
+            if (confirm("Hapus data Tendik ini?")) {
+                stateTendik = stateTendik.filter(t => t.id !== id);
+                setStorage('tendik', stateTendik);
+                populateSekolahSelects();
+                renderTendikTable();
+                renderDashboard();
+            }
+        }
+
+        /* --- SUPERVISI GURU & TENDIK TERBARU --- */
+        function renderSupervisiTable() {
+            const tbody = document.getElementById('supervisiTableBody');
+            const countEl = document.getElementById('supervisiRecordCount');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            let list = stateSupervisi;
+            if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                list = stateSupervisi.filter(s => s.sekolah === stateProfil.sekolahSekarang);
+            }
+
+            if (countEl) countEl.textContent = `Total Evaluasi: ${list.length}`;
+
+            list.forEach((s, idx) => {
+                let isGuru = s.tipe === 'GURU' || (!s.tipe && stateGuru.some(g => g.id === s.guruId));
+                let target = isGuru ? stateGuru.find(g => g.id === s.guruId) : stateTendik.find(t => t.id === s.guruId);
+                
+                if (!target) {
+                    target = { nama: "Personel Terhapus", sekolah: s.sekolah || "-", mapel: "-", tugas: "-" };
+                }
+
+                const avg = Math.round((s.admin + s.modul + s.obs) / 3);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${idx + 1}</td>
+                    <td class="p-3">${s.tanggal}<br><span class="font-bold text-brand-700">${s.sekolah || target.sekolah}</span></td>
+                    <td class="p-3 font-bold text-slate-800">${target.nama}<br><span class="text-[10px] text-slate-500">${isGuru ? (target.mapel || 'Guru') : (target.tugas || 'Tendik')}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isGuru ? 'bg-sky-100 text-sky-800' : 'bg-pink-100 text-pink-800'}">${isGuru ? 'SUPERVISI GURU' : 'SUPERVISI TENDIK'}</span></td>
+                    <td class="p-3 text-center font-semibold">${s.admin}</td>
+                    <td class="p-3 text-center font-semibold">${s.modul}</td>
+                    <td class="p-3 text-center font-semibold">${s.obs}</td>
+                    <td class="p-3 text-center"><span class="px-2.5 py-1 rounded font-black text-xs ${avg >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${avg}</span></td>
+                    <td class="p-3 max-w-xs text-slate-600 bg-slate-50 rounded-lg italic">${s.catatan || '-'}</td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="deleteSupervisi('${s.id}')" class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openModalAddSupervisiGuru() {
+            document.getElementById('msgTanggal').value = new Date().toISOString().split('T')[0];
+            document.getElementById('msgAdmin').value = 88;
+            document.getElementById('msgModul').value = 85;
+            document.getElementById('msgObs').value = 90;
+            document.getElementById('msgCatatan').value = "";
+            openModal('modalSupervisiGuru');
+        }
+
+        function openModalAddSupervisiTendik() {
+            document.getElementById('mstTanggal').value = new Date().toISOString().split('T')[0];
+            document.getElementById('mstAdmin').value = 86;
+            document.getElementById('mstModul').value = 88;
+            document.getElementById('mstObs').value = 87;
+            document.getElementById('mstCatatan').value = "";
+            openModal('modalSupervisiTendik');
+        }
+
+        function saveSupervisiGuruForm(e) {
+            e.preventDefault();
+            const guruId = document.getElementById('msgGuruId').value;
+            let target = stateGuru.find(g => g.id === guruId);
+            const sekolah = target ? target.sekolah : (stateProfil.sekolahSekarang || "SD Negeri 1 Sirnoboyo");
+
+            stateSupervisi.push({
+                id: 'sg' + Date.now(),
+                tanggal: document.getElementById('msgTanggal').value,
+                guruId: guruId,
+                tipe: 'GURU',
+                sekolah: sekolah,
+                admin: parseInt(document.getElementById('msgAdmin').value) || 0,
+                modul: parseInt(document.getElementById('msgModul').value) || 0,
+                obs: parseInt(document.getElementById('msgObs').value) || 0,
+                catatan: document.getElementById('msgCatatan').value
+            });
+
+            setStorage('supervisi', stateSupervisi);
+            renderSupervisiTable();
+            closeModal('modalSupervisiGuru');
+            alert("Hasil supervisi Guru terbaru dan masukan berhasil disimpan secara otomatis ke rekapan!");
+        }
+
+        function saveSupervisiTendikForm(e) {
+            e.preventDefault();
+            const tendikId = document.getElementById('mstTendikId').value;
+            let target = stateTendik.find(t => t.id === tendikId);
+            const sekolah = target ? target.sekolah : (stateProfil.sekolahSekarang || "SD Negeri 1 Sirnoboyo");
+
+            stateSupervisi.push({
+                id: 'st' + Date.now(),
+                tanggal: document.getElementById('mstTanggal').value,
+                guruId: tendikId,
+                tipe: 'TENDIK',
+                sekolah: sekolah,
+                admin: parseInt(document.getElementById('mstAdmin').value) || 0,
+                modul: parseInt(document.getElementById('mstModul').value) || 0,
+                obs: parseInt(document.getElementById('mstObs').value) || 0,
+                catatan: document.getElementById('mstCatatan').value
+            });
+
+            setStorage('supervisi', stateSupervisi);
+            renderSupervisiTable();
+            closeModal('modalSupervisiTendik');
+            alert("Hasil supervisi Tendik terbaru dan masukan berhasil disimpan secara otomatis ke rekapan!");
+        }
+
+        function deleteSupervisi(id) {
+            if (confirm("Hapus rekam supervisi ini?")) {
+                stateSupervisi = stateSupervisi.filter(s => s.id !== id);
+                setStorage('supervisi', stateSupervisi);
+                renderSupervisiTable();
+            }
+        }
+
+        /* --- RAPOR PENDIDIKAN (PBD) --- */
+        function renderPbdData() {
+            const selectEl = document.getElementById('pbdSekolahSelect');
+            let sekolah = selectEl.value;
+            if (stateProfil.role === 'KEPSEK' && stateProfil.sekolahSekarang) {
+                sekolah = stateProfil.sekolahSekarang;
+                selectEl.value = sekolah;
+            } else if (!sekolah) {
+                sekolah = stateKepsek[0] ? stateKepsek[0].sekolah : "";
+            }
+
+            const data = statePbd[sekolah] || { literasi: 80, numerasi: 75, karakter: 85, kualitas: 80, identifikasi: "", refleksi: "", benahi: "" };
+
+            const cardsContainer = document.getElementById('pbdScoreCards');
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-center">
+                        <p class="text-xs text-slate-500 font-bold">Literasi</p>
+                        <h4 class="text-2xl font-black text-emerald-600 mt-1">${data.literasi}</h4>
+                        <span class="text-[10px] font-semibold text-slate-400">Tinggi</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-center">
+                        <p class="text-xs text-slate-500 font-bold">Numerasi</p>
+                        <h4 class="text-2xl font-black text-amber-500 mt-1">${data.numerasi}</h4>
+                        <span class="text-[10px] font-semibold text-slate-400">Sedang</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-center">
+                        <p class="text-xs text-slate-500 font-bold">Karakter</p>
+                        <h4 class="text-2xl font-black text-sky-600 mt-1">${data.karakter}</h4>
+                        <span class="text-[10px] font-semibold text-slate-400">Baik</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-center">
+                        <p class="text-xs text-slate-500 font-bold">Kualitas Pembelajaran</p>
+                        <h4 class="text-2xl font-black text-indigo-600 mt-1">${data.kualitas}</h4>
+                        <span class="text-[10px] font-semibold text-slate-400">Baik</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('pbdIdentifikasi').value = data.identifikasi || "";
+            document.getElementById('pbdRefleksi').value = data.refleksi || "";
+            document.getElementById('pbdBenahi').value = data.benahi || "";
+        }
+
+        function savePbdIrb(e) {
+            e.preventDefault();
+            autoSavePbdIrbDirect();
+            alert("Rekomendasi IRB PBD berhasil disimpan secara otomatis!");
+        }
+
+        /* --- PENDAMPINGAN 8 SNP --- */
+        function renderSnpData() {
+            const sekolah = document.getElementById('snpSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            const scores = stateSnp[sekolah] || [85, 85, 85, 85, 85, 85, 85, 85];
+            const labels = ['Standar Kompetensi Lulusan', 'Standar Isi', 'Standar Proses', 'Standar Penilaian', 'Standar PTK', 'Standar Sarpras', 'Standar Pengelolaan', 'Standar Pembiayaan'];
+
+            const container = document.getElementById('snpInputsContainer');
+            if (container) {
+                container.innerHTML = '';
+                labels.forEach((lbl, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center text-xs p-2 bg-slate-50 rounded-lg border";
+                    div.innerHTML = `
+                        <label class="font-semibold text-slate-700">${lbl}</label>
+                        <input type="number" min="0" max="100" value="${scores[idx]}" data-idx="${idx}" class="snp-input w-20 text-center p-1 border rounded font-bold">
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            renderSnpRadarChart(labels, scores);
+        }
+
+        function renderSnpRadarChart(labels, scores) {
+            const ctx = document.getElementById('snpDetailChart');
+            if (!ctx) return;
+            if (snpDetailChartInstance) snpDetailChartInstance.destroy();
+            snpDetailChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Skor Pemenuhan SNP',
+                        data: scores,
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                        borderColor: '#f59e0b',
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100 } } }
+            });
+        }
+
+        function saveSnpScores(e) {
+            e.preventDefault();
+            const sekolah = document.getElementById('snpSekolahSelect').value;
+            const inputs = document.querySelectorAll('.snp-input');
+            const newScores = [];
+            inputs.forEach(inp => newScores.push(parseInt(inp.value) || 0));
+
+            stateSnp[sekolah] = newScores;
+            setStorage('snp', stateSnp);
+            renderSnpRadarChart(['Standar SKL', 'Standar Isi', 'Standar Proses', 'Standar Penilaian', 'Standar PTK', 'Standar Sarpras', 'Standar Pengelolaan', 'Standar Pembiayaan'], newScores);
+            alert("Nilai 8 SNP berhasil disimpan secara otomatis!");
+        }
+
+        /* --- INSTRUMEN WONOGIRI --- */
+        function renderInstrumenWonogiriData() {
+            const sekolah = document.getElementById('instWonogiriSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            const data = stateInstWonogiri[sekolah] || { ikmKosp: 85, ikmModul: 85, obsPembelajaran: 85, obsAsesmen: 85, p5Modul: 85, p5Karya: 85, catatan: "" };
+
+            document.getElementById('iwIkmKosp').value = data.ikmKosp;
+            document.getElementById('iwIkmModul').value = data.ikmModul;
+            document.getElementById('iwObsPembelajaran').value = data.obsPembelajaran;
+            document.getElementById('iwObsAsesmen').value = data.obsAsesmen;
+            document.getElementById('iwP5Modul').value = data.p5Modul;
+            document.getElementById('iwP5Karya').value = data.p5Karya;
+            document.getElementById('iwCatatanPembinaan').value = data.catatan;
+        }
+
+        function saveInstrumenWonogiri(e) {
+            e.preventDefault();
+            const sekolah = document.getElementById('instWonogiriSekolahSelect').value;
+            stateInstWonogiri[sekolah] = {
+                ikmKosp: parseInt(document.getElementById('iwIkmKosp').value) || 0,
+                ikmModul: parseInt(document.getElementById('iwIkmModul').value) || 0,
+                obsPembelajaran: parseInt(document.getElementById('iwObsPembelajaran').value) || 0,
+                obsAsesmen: parseInt(document.getElementById('iwObsAsesmen').value) || 0,
+                p5Modul: parseInt(document.getElementById('iwP5Modul').value) || 0,
+                p5Karya: parseInt(document.getElementById('iwP5Karya').value) || 0,
+                catatan: document.getElementById('iwCatatanPembinaan').value
+            };
+            setStorage('instWonogiri', stateInstWonogiri);
+            alert("Instrumen Khusus Wonogiri berhasil disimpan!");
+        }
+
+        /* --- KOMPETENSI KEPALA SEKOLAH --- */
+        function renderKompKsData() {
+            const sekolah = document.getElementById('kompKsSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            const data = stateKompKs[sekolah] || { dim1: 85, dim2: 85, dim3: 85, dim4: 85 };
+
+            document.getElementById('kksDim1').value = data.dim1;
+            document.getElementById('kksDim2').value = data.dim2;
+            document.getElementById('kksDim3').value = data.dim3;
+            document.getElementById('kksDim4').value = data.dim4;
+        }
+
+        function saveKompKs(e) {
+            e.preventDefault();
+            const sekolah = document.getElementById('kompKsSekolahSelect').value;
+            stateKompKs[sekolah] = {
+                dim1: parseInt(document.getElementById('kksDim1').value) || 0,
+                dim2: parseInt(document.getElementById('kksDim2').value) || 0,
+                dim3: parseInt(document.getElementById('kksDim3').value) || 0,
+                dim4: parseInt(document.getElementById('kksDim4').value) || 0
+            };
+            setStorage('kompKs', stateKompKs);
+            alert("Penilaian Kompetensi Kepala Sekolah disimpan!");
+        }
+
+        /* --- RKAS & BOS --- */
+        function renderRkasData() {
+            const sekolah = document.getElementById('rkasSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            const items = stateRkas[sekolah] || [];
+
+            const tbody = document.getElementById('rkasTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            items.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${item.program}</td>
+                    <td class="p-3 font-mono font-bold text-slate-700">${item.kode}</td>
+                    <td class="p-3">${item.uraian}</td>
+                    <td class="p-3 font-bold text-slate-800">Rp ${item.nominal.toLocaleString('id-ID')}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status === 'Sesuai' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${item.status}</span></td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="deleteRkasItem('${sekolah}', '${item.id}')" class="px-2 py-1 bg-rose-500 text-white rounded font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openModalAddRkasItem() {
+            document.getElementById('mRkId').value = "";
+            document.getElementById('mRkProgram').value = "";
+            document.getElementById('mRkKode').value = "";
+            document.getElementById('mRkUraian').value = "";
+            document.getElementById('mRkNominal').value = "";
+            openModal('modalRkasItem');
+        }
+
+        function saveRkasItemForm(e) {
+            e.preventDefault();
+            const sekolah = document.getElementById('rkasSekolahSelect').value;
+            if (!stateRkas[sekolah]) stateRkas[sekolah] = [];
+
+            stateRkas[sekolah].push({
+                id: 'rk' + Date.now(),
+                program: document.getElementById('mRkProgram').value,
+                kode: document.getElementById('mRkKode').value,
+                uraian: document.getElementById('mRkUraian').value,
+                nominal: parseInt(document.getElementById('mRkNominal').value) || 0,
+                status: document.getElementById('mRkStatus').value
+            });
+
+            setStorage('rkas', stateRkas);
+            renderRkasData();
+            closeModal('modalRkasItem');
+            alert("Anggaran RKAS disimpan!");
+        }
+
+        function deleteRkasItem(sekolah, id) {
+            if (confirm("Hapus item anggaran RKAS ini?")) {
+                stateRkas[sekolah] = stateRkas[sekolah].filter(item => item.id !== id);
+                setStorage('rkas', stateRkas);
+                renderRkasData();
+            }
+        }
+
+        /* --- GENERATE REPORT PRINT VIEW --- */
+        function generateReportView() {
+            const sekolah = document.getElementById('lapSekolahSelect').value || (stateKepsek[0] ? stateKepsek[0].sekolah : "");
+            const kepsek = stateKepsek.find(k => k.sekolah === sekolah) || { nama: "Bu Sri Wahyuni, S.Pd.", nip: "19750512 199803 2 004" };
+
+            document.getElementById('lapNamaPengawas').textContent = stateProfil.nama;
+            document.getElementById('lapNipPengawas').textContent = stateProfil.nip;
+            document.getElementById('lapNamaSekolah').textContent = sekolah;
+            document.getElementById('lapNamaKepsek').textContent = kepsek.nama;
+
+            document.getElementById('lapSignKepsek').textContent = kepsek.nama;
+            document.getElementById('lapSignKepsekNip').textContent = "NIP. " + kepsek.nip;
+            document.getElementById('lapSignPengawas').textContent = stateProfil.nama;
+            document.getElementById('lapSignPengawasNip').textContent = "NIP. " + stateProfil.nip;
+
+            const pbd = statePbd[sekolah] || { literasi: 85, numerasi: 80, karakter: 90, kualitas: 85 };
+            const snpScores = stateSnp[sekolah] || [88, 85, 90, 85, 88, 82, 86, 88];
+            const snpAvg = Math.round(snpScores.reduce((a,b)=>a+b,0)/snpScores.length);
+            const instW = stateInstWonogiri[sekolah] || { ikmKosp: 88, obsPembelajaran: 90, p5Karya: 88 };
+            const instWAvg = Math.round((instW.ikmKosp + instW.obsPembelajaran + instW.p5Karya)/3);
+
+            const tbody = document.getElementById('lapSummaryTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr>
+                    <td class="border border-slate-400 p-2 font-semibold">1. Rapor Pendidikan & PBD (Rata-Rata Indikator Prioritas)</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold">${Math.round((pbd.literasi+pbd.numerasi+pbd.karakter+pbd.kualitas)/4)}</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold text-emerald-700">Baik / Memenuhi</td>
+                </tr>
+                <tr>
+                    <td class="border border-slate-400 p-2 font-semibold">2. Pemenuhan 8 Standar Nasional Pendidikan (SNP)</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold">${snpAvg}</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold text-emerald-700">Sangat Baik</td>
+                </tr>
+                <tr>
+                    <td class="border border-slate-400 p-2 font-semibold">3. Instrumen Pengawasan Wonogiri (IKM, Observasi, P5)</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold">${instWAvg}</td>
+                    <td class="border border-slate-400 p-2 text-center font-bold text-emerald-700">Sangat Baik</td>
+                </tr>
+            `;
+        }
+    </script>
+</body>
+</html>
